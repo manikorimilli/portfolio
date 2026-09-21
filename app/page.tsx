@@ -9,6 +9,7 @@ import Achievements from "@/components/Achievements";
 import GitHubSection from "@/components/GitHubSection";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import Dock from "@/components/Dock";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      <Dock />
     </>
   );
 }

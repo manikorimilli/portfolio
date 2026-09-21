@@ -1,5 +1,6 @@
 import { ArrowUp } from "lucide-react";
 import { site } from "@/lib/site";
+import { LineHoverLink } from "./ui/line-hover-link";
 
 const quickLinks = [
   { href: "#about", label: "About" },
@@ -42,12 +43,13 @@ export default function Footer() {
             <ul className="flex flex-col gap-2.5">
               {quickLinks.map((l) => (
                 <li key={l.label}>
-                  <a
+                  <LineHoverLink
+                    variant="slide"
                     href={l.href}
-                    className="link-underline text-sm text-foreground/75 hover:text-foreground"
+                    className="text-sm text-foreground/75 hover:text-foreground"
                   >
                     {l.label}
-                  </a>
+                  </LineHoverLink>
                 </li>
               ))}
             </ul>
@@ -60,14 +62,15 @@ export default function Footer() {
             <ul className="flex flex-col gap-2.5">
               {resources.map((l) => (
                 <li key={l.label}>
-                  <a
+                  <LineHoverLink
+                    variant="grow"
                     href={l.href}
                     target={l.href.startsWith("http") ? "_blank" : undefined}
                     rel="noopener noreferrer"
-                    className="link-underline text-sm text-foreground/75 hover:text-foreground"
+                    className="text-sm text-foreground/75 hover:text-foreground"
                   >
                     {l.label}
-                  </a>
+                  </LineHoverLink>
                 </li>
               ))}
             </ul>

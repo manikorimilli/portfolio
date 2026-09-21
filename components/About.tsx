@@ -2,6 +2,7 @@ import { Code2, Lightbulb, Rocket, Sparkles } from "lucide-react";
 import { traits } from "@/lib/data";
 import Reveal from "./ui/Reveal";
 import SectionHeading from "./ui/SectionHeading";
+import { HighlightGrid } from "./ui/highlight-grid";
 
 const traitIcons = [Rocket, Lightbulb, Code2, Sparkles];
 
@@ -22,6 +23,23 @@ const cards = [
     title: "Depth over surface",
     body: "Cutting sync latency 30% or interpretation time 40% comes from understanding what happens underneath the frameworks.",
   },
+];
+
+// Keyword band for the Vengeance HighlightGrid. Colours are pinned to the
+// portfolio's indigo→violet ramp rather than the component's default palette.
+const highlightRows = [
+  [{ label: "typescript" }, { label: "react" }, { label: "node" }],
+  [{ label: "analytics" }, { label: "real-time" }, { label: "llms" }, { label: "apis" }],
+];
+
+const HIGHLIGHT_COLORS = [
+  "#4f46e5",
+  "#6366f1",
+  "#7c3aed",
+  "#8b5cf6",
+  "#818cf8",
+  "#a78bfa",
+  "#9333ea",
 ];
 
 export default function About() {
@@ -64,6 +82,20 @@ export default function About() {
                     </span>
                   );
                 })}
+              </div>
+            </Reveal>
+
+            {/* Vengeance UI sliding-highlight keyword band */}
+            <Reveal delay={0.3}>
+              <div className="mt-8 h-32 md:h-36">
+                {/* The component hardcodes its inner grid to 90%x60% of the
+                    parent; stretch it to fill the wrapper instead. */}
+                <HighlightGrid
+                  rows={highlightRows}
+                  colors={HIGHLIGHT_COLORS}
+                  transitionDuration={280}
+                  className="[&>div]:h-full [&>div]:w-full"
+                />
               </div>
             </Reveal>
           </div>

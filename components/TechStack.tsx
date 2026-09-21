@@ -1,42 +1,97 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cpu } from "lucide-react";
 import { skills, skillFilters } from "@/lib/data";
 import SectionHeading from "./ui/SectionHeading";
 import Reveal from "./ui/Reveal";
+import { LogoSlider } from "./ui/logo-slider";
+import { AnimatedTooltip } from "./ui/animated-tooltip";
+import { CandyButton } from "./ui/candy-button";
+
+// Brand-icon skills feed the marquee; the list is doubled at the call site so
+// the track's -50% loop is seamless.
+const marqueeSkills = skills.filter((s) => s.slug);
+
+function SkillGlyph({ slug, name }: { slug: string; name: string }) {
+  return (
+    <AnimatedTooltip
+      variant="dori"
+      content={name}
+      accentColor="#6366f1"
+      shapeColor="#6366f1"
+      textColor="#ffffff"
+    >
+      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-elev/[0.04] transition-transform duration-300 hover:scale-110">
+        <span
+          aria-hidden
+          className="tech-ico h-6 w-6 text-foreground/80"
+          style={{ "--ico": `url(/icons/${slug}.svg)` } as React.CSSProperties}
+        />
+      </span>
+    </AnimatedTooltip>
+  );
+}
 
 export default function TechStack() {
   const [filter, setFilter] = useState("All");
   const visible =
     filter === "All" ? skills : skills.filter((s) => s.groups.includes(filter));
 
+  const logos = [...marqueeSkills, ...marqueeSkills].map((s, i) => (
+    <SkillGlyph key={`${s.slug}-${i}`} slug={s.slug!} name={s.name} />
+  ));
+
   return (
     <section id="skills" className="mx-auto max-w-6xl px-4 py-6">
       <div className="panel p-6 md:p-12">
-        <SectionHeading title="Skills & Technologies" eyebrow="What I work with" />
+        <SectionHeading
+          title="Skills & Technologies"
+          eyebrow="What I work with"
+        />
 
+        {/* Vengeance UI marquee — the whole stack drifting past, with a
+            tooltip on every glyph. */}
         <Reveal>
-          <div className="mb-8 flex flex-wrap gap-2">
-            {skillFilters.map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`rounded-full px-4 py-2 text-sm transition-all duration-300 ${
-                  filter === f
-                    ? "btn-grad font-medium text-white"
-                    : "card text-muted hover:text-foreground"
-                }`}
-              >
-                {f}
-              </button>
-            ))}
+          <div className="mb-10">
+            <LogoSlider
+              logos={logos}
+              speed={45}
+              showBlur={false}
+              pauseOnHover
+            />
           </div>
         </Reveal>
 
-        <motion.div layout className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+        <Reveal>
+          <div className="mb-8 flex flex-wrap gap-2">
+            {skillFilters.map((f) =>
+              filter === f ? (
+                <CandyButton
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className="px-4 py-2 text-sm"
+                >
+                  {f}
+                </CandyButton>
+              ) : (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className="card rounded-xl px-4 py-2 text-sm text-muted transition-all duration-300 hover:text-foreground"
+                >
+                  {f}
+                </button>
+              )
+            )}
+          </div>
+        </Reveal>
+
+        <motion.div
+          layout
+          className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6"
+        >
           <AnimatePresence mode="popLayout">
             {visible.map((skill) => (
               <motion.div

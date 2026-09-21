@@ -6,13 +6,23 @@ import { ChevronDown } from "lucide-react";
 import { experiences } from "@/lib/data";
 import SectionHeading from "./ui/SectionHeading";
 import Reveal from "./ui/Reveal";
+import { PerspectiveGrid } from "./ui/perspective-grid";
+import TextAnimation from "./ui/staggerText";
 
 export default function Experience() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
     <section id="experience" className="mx-auto max-w-6xl px-4 py-6">
-      <div className="panel p-6 md:p-12">
+      <div className="panel relative overflow-hidden p-6 md:p-12">
+        {/* Vengeance UI receding tile grid, used as a faint floor */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-64 opacity-[0.18] [mask-image:linear-gradient(to_top,black,transparent)]"
+        >
+          <PerspectiveGrid gridSize={18} showOverlay={false} className="!bg-transparent" />
+        </div>
+
         <SectionHeading title="Experience" eyebrow="Where I've built" />
 
         <div className="relative md:pl-8">
@@ -47,7 +57,7 @@ export default function Experience() {
                         <div>
                           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                             <h3 className="text-lg font-semibold tracking-tight md:text-xl">
-                              {exp.role}
+                              <TextAnimation delay={0.05}>{exp.role}</TextAnimation>
                             </h3>
                             <span className="font-mono text-xs text-muted">
                               {exp.period}

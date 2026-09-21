@@ -35,7 +35,7 @@ export default function ParticleField() {
     const root = document.documentElement;
     let colors = { dot: "199,204,255", line: "165,180,252", bloom: "139,148,248" };
     const applyTheme = () => {
-      colors = root.classList.contains("light")
+      colors = !root.classList.contains("dark")
         ? { dot: "67,56,202", line: "79,70,229", bloom: "99,102,241" }
         : { dot: "199,204,255", line: "165,180,252", bloom: "139,148,248" };
     };

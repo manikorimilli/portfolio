@@ -140,11 +140,14 @@ export const skillFilters = [
   "Tools",
 ];
 
-export const heroStats = [
-  { value: "3+", label: "Years of Experience" },
-  { value: "20+", label: "Technologies Mastered" },
-  { value: "40%", label: "Data Interpretation Time Reduced" },
-  { value: "100+", label: "AI Model Recommendations" },
+// Split into number + suffix so <StatsCounter> can count up to them.
+export type HeroStat = { value: number; suffix: string; label: string };
+
+export const heroStats: HeroStat[] = [
+  { value: 3, suffix: "+", label: "Years of Experience" },
+  { value: 20, suffix: "+", label: "Technologies Mastered" },
+  { value: 40, suffix: "%", label: "Interpretation Time Cut" },
+  { value: 100, suffix: "+", label: "AI Model Recommendations" },
 ];
 
 export const traits = [

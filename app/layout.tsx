@@ -82,14 +82,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} noise orbs antialiased`}
       >
         <script
-          // Apply the saved theme before first paint to avoid a flash.
+          // Reconcile the saved theme before first paint to avoid a flash.
+          // Dark ships as the default class on <html>; only strip it if the
+          // visitor previously chose light.
           dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.theme==="light")document.documentElement.classList.add("light")}catch(e){}`,
+            __html: `try{if(localStorage.theme==="light")document.documentElement.classList.remove("dark")}catch(e){}`,
           }}
         />
         <script

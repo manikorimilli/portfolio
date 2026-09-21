@@ -2,8 +2,23 @@ import { Award, GraduationCap, Star, Trophy, Zap } from "lucide-react";
 import { achievements, education } from "@/lib/data";
 import SectionHeading from "./ui/SectionHeading";
 import Reveal from "./ui/Reveal";
+import { GlowBorderCard } from "./ui/glow-border-card";
 
 const icons = [Trophy, Star, Award, Zap];
+
+// Indigo→violet ramp for the rotating conic glow.
+const GLOW = [
+  "#4f46e5",
+  "#6366f1",
+  "#818cf8",
+  "#a78bfa",
+  "#8b5cf6",
+  "#7c3aed",
+  "#9333ea",
+  "#a78bfa",
+  "#6366f1",
+  "#4f46e5",
+];
 
 export default function Achievements() {
   return (
@@ -12,9 +27,20 @@ export default function Achievements() {
         <div className="panel p-6 md:p-10">
           <SectionHeading title="Education" />
           <Reveal>
-            <div className="card p-5">
-              <div className="flex items-start gap-4">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-elev/[0.04]">
+            {/* The one credential worth a glowing frame */}
+            <GlowBorderCard
+              width="100%"
+              height="auto"
+              borderRadius="1rem"
+              borderWidth="0.55em"
+              blurAmount="1em"
+              inset="-0.65em"
+              animationDuration={11}
+              gradientColors={GLOW}
+              className="!block rounded-2xl"
+            >
+              <div className="flex items-start gap-4 text-left">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-elev/[0.06]">
                   <GraduationCap size={18} className="text-accent" />
                 </span>
                 <div>
@@ -26,7 +52,7 @@ export default function Achievements() {
                   <p className="mt-2 text-xs text-muted">{education.detail}</p>
                 </div>
               </div>
-            </div>
+            </GlowBorderCard>
           </Reveal>
         </div>
 

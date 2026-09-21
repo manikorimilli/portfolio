@@ -1,13 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
 import { site } from "@/lib/site";
 import SectionHeading from "./ui/SectionHeading";
 import Reveal from "./ui/Reveal";
 import Magnetic from "./ui/Magnetic";
+import { CandyButton } from "./ui/candy-button";
+import { FaqAccordion } from "./ui/faq-accordion";
+import { LineHoverLink } from "./ui/line-hover-link";
 import { GithubIcon, LinkedinIcon } from "./ui/BrandIcons";
+
+// Answers to what people actually ask before reaching out.
+const faqs = [
+  {
+    question: "What kind of roles are you open to?",
+    answer:
+      "Full-stack or frontend-leaning product engineering — ideally somewhere data, real-time behaviour or AI features are central to the product rather than bolted on.",
+  },
+  {
+    question: "What are you strongest at?",
+    answer:
+      "Turning fuzzy product questions into shipped interfaces: React and TypeScript on the front, Node and SQL behind it, and the visualization work that makes the data legible.",
+  },
+  {
+    question: "Are you available for freelance work?",
+    answer:
+      "Yes, for focused scopes — dashboards, analytics surfaces, AI-assisted features and design-heavy marketing builds. Email is the fastest way to start that conversation.",
+  },
+  {
+    question: "What is your notice period?",
+    answer:
+      "I'm currently at DeeptaAI in Hyderabad and open to conversations. Reach out and I'll share specifics on timelines.",
+  },
+];
 
 const info = [
   { icon: Mail, value: site.email, href: `mailto:${site.email}` },
@@ -40,7 +66,15 @@ export default function Contact() {
               <p className="text-sm leading-relaxed text-muted md:text-base">
                 Have a project in mind or want to collaborate? Feel free to
                 reach out — I&apos;m always open to discussing ambitious
-                products.
+                products. The fastest route is{" "}
+                <LineHoverLink
+                  variant="sweep"
+                  href={`mailto:${site.email}`}
+                  className="font-medium text-accent"
+                >
+                  a direct email
+                </LineHoverLink>
+                .
               </p>
             </Reveal>
 
@@ -133,21 +167,31 @@ export default function Contact() {
                 className="w-full resize-none rounded-xl border border-elev/10 bg-elev/[0.03] px-4 py-3.5 text-sm outline-none transition-colors placeholder:text-muted/70 focus:border-accent/50"
               />
               <Magnetic strength={0.25}>
-                <motion.button
-                  type="submit"
-                  whileTap={{ scale: 0.97 }}
-                  className="btn-grad group flex w-full items-center justify-center gap-2.5 rounded-xl px-8 py-4 text-sm font-medium text-white"
-                >
-                  Send Message
-                  <Send
-                    size={15}
-                    className="transition-transform duration-300 group-hover:translate-x-1"
-                  />
-                </motion.button>
+                <CandyButton type="submit" className="group w-full py-4">
+                  <span className="flex items-center justify-center gap-2.5">
+                    Send Message
+                    <Send
+                      size={15}
+                      className="transition-transform duration-300 group-hover:translate-x-1"
+                    />
+                  </span>
+                </CandyButton>
               </Magnetic>
             </form>
           </Reveal>
         </div>
+
+        {/* Vengeance UI accordion, answering the usual pre-contact questions */}
+        <Reveal delay={0.1}>
+          <div className="mt-14">
+            <div className="hairline mb-10" />
+            <FaqAccordion
+              items={faqs}
+              title="Before you write"
+              className="!max-w-none !py-0"
+            />
+          </div>
+        </Reveal>
       </div>
     </section>
   );
