@@ -68,11 +68,12 @@ const jsonLd = {
   knowsAbout: [
     "TypeScript",
     "React",
-    "Next.js",
     "Node.js",
+    "Java",
+    "Spring Boot",
     "PostgreSQL",
-    "WebSockets",
-    "AI Engineering",
+    "Microservices",
+    "LLM APIs",
   ],
 };
 

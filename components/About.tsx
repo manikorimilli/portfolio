@@ -9,11 +9,11 @@ const traitIcons = [Rocket, Lightbulb, Code2, Sparkles];
 const cards = [
   {
     title: "Products, not pages",
-    body: "Every feature I ship — from analytics dashboards to real-time canvases — starts with the question: what should this feel like to use?",
+    body: "Every feature I ship, from retention dashboards to messaging APIs, starts with the question: what should this feel like to use?",
   },
   {
-    title: "Real-time by instinct",
-    body: "Cursors moving on shared canvases, dashboards updating live, syncs firing on webhooks. I gravitate toward hard synchronization problems.",
+    title: "Integrations by instinct",
+    body: "Cohort syncs firing on webhooks, SMS providers swapped by config, recurring schedules with health checks. I gravitate toward systems that talk to other systems.",
   },
   {
     title: "AI as a multiplier",
@@ -21,7 +21,7 @@ const cards = [
   },
   {
     title: "Depth over surface",
-    body: "Cutting sync latency 30% or interpretation time 40% comes from understanding what happens underneath the frameworks.",
+    body: "Making a 10,000-user dashboard 45% faster with code splitting and lazy loading comes from understanding what happens underneath the frameworks.",
   },
 ];
 
@@ -29,7 +29,7 @@ const cards = [
 // portfolio's indigo→violet ramp rather than the component's default palette.
 const highlightRows = [
   [{ label: "typescript" }, { label: "react" }, { label: "node" }],
-  [{ label: "analytics" }, { label: "real-time" }, { label: "llms" }, { label: "apis" }],
+  [{ label: "analytics" }, { label: "integrations" }, { label: "llms" }, { label: "apis" }],
 ];
 
 const HIGHLIGHT_COLORS = [
@@ -59,7 +59,7 @@ export default function About() {
             </Reveal>
             <Reveal delay={0.1}>
               <p className="mt-5 text-sm leading-relaxed text-muted md:text-base">
-                My path started with a CS degree, a detour through training AI
+                My path started with an ECE degree, a detour through training AI
                 models, then full-time product engineering. Each step taught
                 me something the next one needed — evaluating LLMs made me
                 precise about quality, building chatbot platforms sharpened my

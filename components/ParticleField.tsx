@@ -27,7 +27,7 @@ export default function ParticleField() {
     let w = 0,
       h = 0,
       dpr = 1;
-    let particles: Particle[] = [];
+    const particles: Particle[] = [];
     const mouse = { x: -9999, y: -9999 };
     let raf = 0;
 
@@ -43,6 +43,16 @@ export default function ParticleField() {
     const observer = new MutationObserver(applyTheme);
     observer.observe(root, { attributes: true, attributeFilter: ["class"] });
 
+    const makeParticle = (): Particle => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      r: Math.random() * 1.2 + 0.4,
+      depth: Math.random() * 0.7 + 0.3,
+      tw: Math.random() * Math.PI * 2,
+    });
+
     const resize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       w = window.innerWidth;
@@ -53,16 +63,11 @@ export default function ParticleField() {
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const count = Math.min(Math.floor((w * h) / 14000), 140);
-      particles = Array.from({ length: count }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.15,
-        vy: (Math.random() - 0.5) * 0.15,
-        r: Math.random() * 1.2 + 0.4,
-        depth: Math.random() * 0.7 + 0.3,
-        tw: Math.random() * Math.PI * 2,
-      }));
+      // Grow or trim instead of reseeding, so a mobile URL-bar resize does
+      // not make the whole field jump.
+      const count = Math.min(Math.floor((w * h) / 14000), 110);
+      while (particles.length < count) particles.push(makeParticle());
+      particles.length = count;
     };
 
     const onMove = (e: MouseEvent) => {
@@ -71,8 +76,25 @@ export default function ParticleField() {
     };
 
     const LINK_DIST = 110;
+    const LINK_DIST2 = LINK_DIST * LINK_DIST;
+    // The drift is slow, so 30fps is visually identical to 60/120fps and
+    // halves (or quarters) the canvas work on high-refresh screens.
+    const FRAME_MS = 1000 / 30;
+    // Alpha is quantised into buckets so each bucket is one path and one
+    // fill/stroke call, instead of one call per dot and per line.
+    const DOT_BUCKETS = 6;
+    const LINE_BUCKETS = 4;
+    const dotPaths: Path2D[] = [];
+    const linePaths: Path2D[] = [];
+    let last = 0;
 
     const frame = (t: number) => {
+      raf = requestAnimationFrame(frame);
+      if (t - last < FRAME_MS - 2) return;
+      // Movement was tuned per 60fps frame; scale it to the real step.
+      const step = last ? Math.min((t - last) / 16.67, 4) : 1;
+      last = t;
+
       ctx.clearRect(0, 0, w, h);
 
       // Soft light bloom that drifts with the mouse
@@ -87,17 +109,20 @@ export default function ParticleField() {
         ctx.fillRect(0, 0, w, h);
       }
 
+      for (let b = 0; b < DOT_BUCKETS; b++) dotPaths[b] = new Path2D();
+      for (let b = 0; b < LINE_BUCKETS; b++) linePaths[b] = new Path2D();
+
       for (const p of particles) {
         if (!reduced) {
-          p.x += p.vx * p.depth;
-          p.y += p.vy * p.depth;
+          p.x += p.vx * p.depth * step;
+          p.y += p.vy * p.depth * step;
 
           // Gentle attraction toward the cursor
           const dx = mouse.x - p.x;
           const dy = mouse.y - p.y;
           const d2 = dx * dx + dy * dy;
           if (d2 < 160 * 160 && d2 > 1) {
-            const f = 0.0003 * p.depth;
+            const f = 0.0003 * p.depth * step;
             p.x += dx * f;
             p.y += dy * f;
           }
@@ -108,35 +133,41 @@ export default function ParticleField() {
           if (p.y > h + 10) p.y = -10;
         }
 
+        // alpha in (0, 0.5]; bucket it
         const twinkle = 0.5 + 0.5 * Math.sin(t * 0.001 + p.tw);
         const alpha = (0.15 + 0.35 * twinkle) * p.depth;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${colors.dot},${alpha})`;
-        ctx.fill();
+        const b = Math.min(DOT_BUCKETS - 1, Math.floor((alpha / 0.5) * DOT_BUCKETS));
+        dotPaths[b].moveTo(p.x + p.r, p.y);
+        dotPaths[b].arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      }
+
+      for (let b = 0; b < DOT_BUCKETS; b++) {
+        ctx.fillStyle = `rgba(${colors.dot},${((b + 0.5) / DOT_BUCKETS) * 0.5})`;
+        ctx.fill(dotPaths[b]);
       }
 
       // Constellation lines between nearby particles
       for (let i = 0; i < particles.length; i++) {
         const a = particles[i];
         for (let j = i + 1; j < particles.length; j++) {
-          const b = particles[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < LINK_DIST) {
-            const alpha = (1 - dist / LINK_DIST) * 0.08;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(${colors.line},${alpha})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
+          const c = particles[j];
+          const dx = a.x - c.x;
+          const dy = a.y - c.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < LINK_DIST2) {
+            const closeness = 1 - Math.sqrt(d2) / LINK_DIST;
+            const b = Math.min(LINE_BUCKETS - 1, Math.floor(closeness * LINE_BUCKETS));
+            linePaths[b].moveTo(a.x, a.y);
+            linePaths[b].lineTo(c.x, c.y);
           }
         }
       }
 
-      raf = requestAnimationFrame(frame);
+      ctx.lineWidth = 0.5;
+      for (let b = 0; b < LINE_BUCKETS; b++) {
+        ctx.strokeStyle = `rgba(${colors.line},${((b + 0.5) / LINE_BUCKETS) * 0.08})`;
+        ctx.stroke(linePaths[b]);
+      }
     };
 
     resize();

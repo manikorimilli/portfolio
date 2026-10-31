@@ -29,7 +29,7 @@ const ORBIT_OUTER = [
   { slug: "git", label: "Git" },
 ];
 const ORBIT_INNER = [
-  { slug: "angular", label: "Angular" },
+  { slug: "openjdk", label: "Java" },
   { slug: "tailwindcss", label: "Tailwind" },
   { slug: "mongodb", label: "MongoDB" },
 ];
@@ -210,20 +210,18 @@ export default function Hero() {
             </div>
 
             {/* Floating accent chips */}
-            <motion.span
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="glass pointer-events-none absolute -right-2 top-14 flex items-center gap-1.5 rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.15em] text-foreground/80"
+            <span
+              style={{ "--float-y": "-10px", "--float-duration": "5s" } as React.CSSProperties}
+              className="float-y glass pointer-events-none absolute -right-2 top-14 flex items-center gap-1.5 rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.15em] text-foreground/80"
             >
               <Sparkles size={11} className="text-accent" /> AI-Powered
-            </motion.span>
-            <motion.span
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="glass pointer-events-none absolute -left-2 bottom-16 rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.15em] text-foreground/80"
+            </span>
+            <span
+              style={{ "--float-y": "10px", "--float-duration": "6s" } as React.CSSProperties}
+              className="float-y glass pointer-events-none absolute -left-2 bottom-16 rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.15em] text-foreground/80"
             >
-              1.5+ yrs shipping
-            </motion.span>
+              2+ yrs shipping
+            </span>
           </motion.div>
         </div>
 

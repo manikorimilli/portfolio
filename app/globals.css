@@ -121,28 +121,31 @@ body {
 }
 
 /* Large bento panel — the rounded section containers */
+/* No backdrop-filter here on purpose: these panels are viewport-sized and sit
+   over the animated particle canvas, so a blur had to be recomputed for every
+   visible panel on every frame. A denser base gives the same softening. */
 .panel {
   background: linear-gradient(
     160deg,
-    rgba(255, 255, 255, 0.85),
-    rgba(255, 255, 255, 0.6) 45%,
-    rgba(99, 102, 241, 0.05)
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.72) 45%,
+    rgba(238, 239, 255, 0.7)
   );
   border: 1px solid var(--line);
   border-radius: 1.75rem;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.8) inset,
     0 24px 60px rgba(30, 34, 70, 0.1);
 }
 .dark .panel {
-  background: linear-gradient(
-    160deg,
-    rgba(255, 255, 255, 0.045),
-    rgba(255, 255, 255, 0.015) 45%,
-    rgba(129, 140, 248, 0.03)
-  );
+  background:
+    linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.015) 45%,
+      rgba(129, 140, 248, 0.03)
+    ),
+    rgba(7, 8, 15, 0.6);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.06) inset,
     0 24px 60px rgba(0, 0, 0, 0.45);
@@ -411,6 +414,17 @@ body {
   border: 1px solid var(--line);
 }
 
+/* Gentle vertical bob for the hero's floating chips. CSS rather than a
+   framer-motion loop so it runs on the compositor and pauses offscreen. */
+@keyframes float-y {
+  50% {
+    transform: translateY(var(--float-y, -10px));
+  }
+}
+.float-y {
+  animation: float-y var(--float-duration, 5s) ease-in-out infinite;
+}
+
 /* Counter-rotating orbital rings in the hero visual */
 @keyframes orbit {
   to {
@@ -475,6 +489,22 @@ body {
   }
 }
 
+/* Sections scrolled out of view stop their infinite CSS animations
+   (aurora, orbits, glow borders, marquee). Toggled by <PauseOffscreen>. */
+[data-offscreen] *,
+[data-offscreen] *::before,
+[data-offscreen] *::after {
+  animation-play-state: paused !important;
+}
+
+/* Set for one frame while the theme flips, so hundreds of elements do not
+   each run their own colour transition at once. */
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -483,4 +513,10 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Theme crossfade via the View Transitions API (see ThemeToggle). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
 }

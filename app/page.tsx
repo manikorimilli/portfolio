@@ -10,6 +10,7 @@ import GitHubSection from "@/components/GitHubSection";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import Dock from "@/components/Dock";
+import PauseOffscreen from "@/components/providers/PauseOffscreen";
 
 export default function Home() {
   return (
@@ -28,6 +29,7 @@ export default function Home() {
       </main>
       <Footer />
       <Dock />
+      <PauseOffscreen />
     </>
   );
 }

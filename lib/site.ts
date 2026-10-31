@@ -12,5 +12,5 @@ export const site = {
   github: "https://github.com/manikorimilli",
   linkedin: "https://www.linkedin.com/in/manikorimilli/",
   resume: "/resume.pdf",
-  url: "https://manikanta.dev",
+  url: "https://new-portfolio-taupe-chi.vercel.app",
 };

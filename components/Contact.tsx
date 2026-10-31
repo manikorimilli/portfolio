@@ -21,7 +21,7 @@ const faqs = [
   {
     question: "What are you strongest at?",
     answer:
-      "Turning fuzzy product questions into shipped interfaces: React and TypeScript on the front, Node and SQL behind it, and the visualization work that makes the data legible.",
+      "Turning fuzzy product questions into shipped interfaces: React and TypeScript on the front, Node.js or Java and Spring Boot behind it, and the visualization work that makes the data legible.",
   },
   {
     question: "Are you available for freelance work?",

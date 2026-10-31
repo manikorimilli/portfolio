@@ -17,8 +17,39 @@ export default function ThemeToggle() {
 
   const toggle = () => {
     const next = !dark;
-    document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("theme", next ? "dark" : "light");
+    const root = document.documentElement;
+
+    // Flip with every CSS transition disabled; otherwise each card, panel and
+    // the body animate their colours separately and the page stutters.
+    const apply = () => {
+      root.classList.add("theme-switching");
+      root.classList.toggle("dark", next);
+      // Resolve the new colours now, while transitions are off; restoring
+      // them afterwards does not animate anything. A timeout rather than
+      // rAF, since rAF never fires in a background tab.
+      void window.getComputedStyle(document.body).color;
+      setTimeout(() => root.classList.remove("theme-switching"), 1);
+    };
+
+    // Where supported, crossfade one snapshot of the page instead.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (
+      document.startViewTransition &&
+      !reduced &&
+      document.visibilityState === "visible"
+    ) {
+      const vt = document.startViewTransition(apply);
+      // The browser may still skip the animation (e.g. tab hidden mid-way);
+      // the theme is applied regardless, so swallow the rejection.
+      vt.ready.catch(() => {});
+      vt.finished.catch(() => {});
+    } else {
+      apply();
+    }
+
+    try {
+      localStorage.setItem("theme", next ? "dark" : "light");
+    } catch {}
     setDark(next);
   };
 

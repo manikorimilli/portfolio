@@ -24,29 +24,40 @@ export default function Cursor() {
       rx = 0,
       ry = 0;
     let hovering = false;
+    let wasHovering: boolean | null = null;
     let raf = 0;
+
+    // The loop only runs while the ring is still catching up with the
+    // pointer; an idle cursor costs nothing per frame.
+    const loop = () => {
+      rx += (x - rx) * 0.15;
+      ry += (y - ry) * 0.15;
+      const settled = Math.abs(x - rx) < 0.1 && Math.abs(y - ry) < 0.1;
+      if (settled) {
+        rx = x;
+        ry = y;
+      }
+      const scale = hovering ? 1.8 : 1;
+      ring.style.transform = `translate(${rx - 16}px, ${ry - 16}px) scale(${scale})`;
+      if (hovering !== wasHovering) {
+        ring.style.borderColor = hovering
+          ? "rgba(255,255,255,0.5)"
+          : "rgba(255,255,255,0.25)";
+        wasHovering = hovering;
+      }
+      raf = settled ? 0 : requestAnimationFrame(loop);
+    };
 
     const onMove = (e: MouseEvent) => {
       x = e.clientX;
       y = e.clientY;
       const t = e.target as HTMLElement;
       hovering = !!t.closest("a, button, [role='button'], input, textarea");
-    };
-
-    const loop = () => {
-      rx += (x - rx) * 0.15;
-      ry += (y - ry) * 0.15;
       dot.style.transform = `translate(${x - 3}px, ${y - 3}px)`;
-      const scale = hovering ? 1.8 : 1;
-      ring.style.transform = `translate(${rx - 16}px, ${ry - 16}px) scale(${scale})`;
-      ring.style.borderColor = hovering
-        ? "rgba(255,255,255,0.5)"
-        : "rgba(255,255,255,0.25)";
-      raf = requestAnimationFrame(loop);
+      if (!raf) raf = requestAnimationFrame(loop);
     };
 
     window.addEventListener("mousemove", onMove, { passive: true });
-    raf = requestAnimationFrame(loop);
     return () => {
       window.removeEventListener("mousemove", onMove);
       cancelAnimationFrame(raf);
