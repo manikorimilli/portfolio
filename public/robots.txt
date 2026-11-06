@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://new-portfolio-taupe-chi.vercel.app/sitemap.xml
+Sitemap: https://manikorimilli.vercel.app/sitemap.xml

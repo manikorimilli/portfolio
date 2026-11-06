@@ -1,5 +1,7 @@
 # Manikanta Korimilli · Portfolio
 
+Live at https://manikorimilli.vercel.app
+
 Personal portfolio built with React 19, TypeScript and Vite. Motion by GSAP
 (ScrollTrigger, SplitText) and Lenis.
 
