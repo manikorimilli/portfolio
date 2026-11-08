@@ -1,6 +1,6 @@
 # Manikanta Korimilli
 
-Software Development Engineer · DeeptaAI
+Software Development Engineer 
 
 [![Engineered for scale.](.github/hero.webp)](https://manikorimilli.vercel.app/)
 
